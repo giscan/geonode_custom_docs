@@ -134,7 +134,8 @@ Throughout this section, we will walk through the creation of a basic poll appli
    Run the development server and explore the polls app in the Django Admin by pointing your browser to 
    http://<geonode_host>/admin/ and logging in with the credentials you specified in `.env` file.
 
-img/admin_top.png
+[![](img/admin_top.png)]
+
 
    You can see all of the other apps that are installed as part of your GeoNode project, 
    but we are specifically interested in the Polls app for now.
