@@ -78,20 +78,20 @@ Throughout this section, we will walk through the creation of a basic poll appli
    Edit the :file:`my_app/models.py` file so it looks like this:
 
 
-       from django.db import models
+    from django.db import models
 
-       class Poll(models.Model):
-           question = models.CharField(max_length=200)
-           pub_date = models.DateTimeField('date published')
-           def __unicode__(self):
-               return self.question
+    class Poll(models.Model):
+        question = models.CharField(max_length=200)
+        pub_date = models.DateTimeField('date published')
+        def __unicode__(self):
+            return self.question
 
-       class Choice(models.Model):
-           poll = models.ForeignKey(Poll)
-           choice = models.CharField(max_length=200)
-           votes = models.IntegerField()
-           def __unicode__(self):
-               return self.choice
+    class Choice(models.Model):
+        poll = models.ForeignKey(Poll)
+        choice = models.CharField(max_length=200)
+        votes = models.IntegerField()
+        def __unicode__(self):
+            return self.choice
 
    That small bit of model code gives Django a lot of information. With it, Django is able to:
 
@@ -110,7 +110,7 @@ Throughout this section, we will walk through the creation of a basic poll appli
        $ docker-compose exec django /spcgeonode/manage.py makemigrations
        $ docker-compose exec django /spcgeonode/manage.py migrate
 
-   The ``makemigrations`` and ``migrate`` command runs the SQL from ``sqlall`` on your database for all apps in 
+   The ``makemigrations`` and ``migrate`` command runs the SQL from ``sqlall (wrong : need update)`` on your database for all apps in 
    INSTALLED_APPS that don't already exist in your database. This creates all the tables, initial data, and indexes 
    for any apps you've added to your project since the last time you ran ``makemigrations`` and ``migrate``. 
    ``makemigrations`` and ``migrate`` can be called as often as you like, and it will only ever create the tables that don't exist.
@@ -126,19 +126,19 @@ Throughout this section, we will walk through the creation of a basic poll appli
    in our database. Create and edit a new file called `my_app/admin.py` and make it look like the this:
 
 
-       from my_app.models import Poll
-       from django.contrib import admin
+    from my_app.models import Poll
+    from django.contrib import admin
 
-       admin.site.register(Poll)
+    admin.site.register(Poll)
 
    Run the development server and explore the polls app in the Django Admin by pointing your browser to 
-   http://<geonode_host>/admin/ and logging in with the credentials you specified in `.env` file.
+   http://<geonode_host>/admin/ and logging in with the credentials you specified in `Docker SPC GeoNode .env` file.
 
 ![](img/admin_top.png)
 
 
    You can see all of the other apps that are installed as part of your GeoNode project, 
-   but we are specifically interested in the Polls app for now.
+   but we are specifically interested in the My_app app for now.
 
    ![](img/admin_polls.png)
 
@@ -153,23 +153,23 @@ Throughout this section, we will walk through the creation of a basic poll appli
 #. Configure Choice model
 
    The next step is to configure the Choice model in the admin, but we will configure the choices to be editable in-line 
-   with the Poll objects they are attached to. Edit the same :file:`polls/admin.py` so it now looks like the following:
+   with the Poll objects they are attached to. Edit the same :file:`my_app/admin.py` so it now looks like the following:
 
-       from my_app.models import Poll, Choice
-       from django.contrib import admin
+    from my_app.models import Poll, Choice
+    from django.contrib import admin
 
-       class ChoiceInline(admin.StackedInline):
-           model = Choice
-           extra = 3
+    class ChoiceInline(admin.StackedInline):
+        model = Choice
+        extra = 3
 
-       class PollAdmin(admin.ModelAdmin):
-           fieldsets = [
-               (None,               {'fields': ['question']}),
-               ('Date information', {'fields': ['pub_date'], 'classes': ['collapse']}),
-           ]
-           inlines = [ChoiceInline]
+    class PollAdmin(admin.ModelAdmin):
+        fieldsets = [
+            (None,               {'fields': ['question']}),
+            ('Date information', {'fields': ['pub_date'], 'classes': ['collapse']}),
+        ]
+        inlines = [ChoiceInline]
 
-       admin.site.register(Poll, PollAdmin)
+    admin.site.register(Poll, PollAdmin)
 
    This tells Django that Choice objects are edited on the Poll admin page, and by default, provide enough fields for 3 choices.
 
@@ -199,10 +199,10 @@ Throughout this section, we will walk through the creation of a basic poll appli
 
    .. code-block:: python
 
-       url(r'^polls/$', 'polls.views.index'),
-       url(r'^polls/(?P<poll_id>\d+)/$', 'polls.views.detail'),
-       url(r'^polls/(?P<poll_id>\d+)/results/$', 'polls.views.results'),
-       url(r'^polls/(?P<poll_id>\d+)/vote/$', 'polls.views.vote'),
+    url(r'^polls/$', 'polls.views.index'),
+    url(r'^polls/(?P<poll_id>\d+)/$', 'polls.views.detail'),
+    url(r'^polls/(?P<poll_id>\d+)/results/$', 'polls.views.results'),
+    url(r'^polls/(?P<poll_id>\d+)/vote/$', 'polls.views.vote'),
 
    .. note:: Eventually we will want to move this set of URL configurations inside the URLs app itself, but for the sake of 
    brevity in this workshop, we will put them in the main :file:`urls.py` for now. You can consult the Django tutorial for 
@@ -212,29 +212,29 @@ Throughout this section, we will walk through the creation of a basic poll appli
 
    .. code-block:: python
 
-       from django.template import RequestContext, loader
-       from polls.models import Poll
-       from django.http import HttpResponse
-       from django.http import Http404
-       from django.shortcuts import render_to_response
+    from django.template import RequestContext, loader
+    from polls.models import Poll
+    from django.http import HttpResponse
+    from django.http import Http404
+    from django.shortcuts import render_to_response
 
-       def index(request):
-           latest_poll_list = Poll.objects.all().order_by('-pub_date')[:5]
-           return render_to_response('polls/index.html',
-               RequestContext(request, {'latest_poll_list': latest_poll_list}))
+    def index(request):
+        latest_poll_list = Poll.objects.all().order_by('-pub_date')[:5]
+        return render_to_response('polls/index.html',
+            RequestContext(request, {'latest_poll_list': latest_poll_list}))
 
-       def detail(request, poll_id):
-           try:
-               p = Poll.objects.get(pk=poll_id)
-           except Poll.DoesNotExist:
-               raise Http404
-           return render_to_response('polls/detail.html', RequestContext(request, {'poll': p}))
+    def detail(request, poll_id):
+        try:
+            p = Poll.objects.get(pk=poll_id)
+        except Poll.DoesNotExist:
+            raise Http404
+        return render_to_response('polls/detail.html', RequestContext(request, {'poll': p}))
 
-       def results(request, poll_id):
-           return HttpResponse("You're looking at the results of poll %s." % poll_id)
+    def results(request, poll_id):
+        return HttpResponse("You're looking at the results of poll %s." % poll_id)
 
-       def vote(request, poll_id):
-           return HttpResponse("You're voting on poll %s." % poll_id)
+    def vote(request, poll_id):
+        return HttpResponse("You're voting on poll %s." % poll_id)
 
    .. note:: We have only stubbed in the views for the results and vote pages. They are not very useful as-is. We will revisit these later.
 
@@ -323,27 +323,27 @@ Now that we have created our own app and added it to our GeoNode project, the ne
 
    .. code-block:: python
 
-       # Apps bundled with Django
-       'django.contrib.auth',
-       'django.contrib.contenttypes',
-       'django.contrib.sessions',
-       'django.contrib.sites',
-       'django.contrib.admin',
-       'django.contrib.sitemaps',
-       'django.contrib.staticfiles',
-       'django.contrib.messages',
-       'django.contrib.humanize',
-       'django.contrib.comments',
+    # Apps bundled with Django
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.sites',
+    'django.contrib.admin',
+    'django.contrib.sitemaps',
+    'django.contrib.staticfiles',
+    'django.contrib.messages',
+    'django.contrib.humanize',
+    'django.contrib.comments',
 
    And then add the ``tagging``, ``mptt`` and ``zinnia`` apps to the end of the INSTALLED_APPS where we previously added a section labeled "My GeoNode apps". It should like like the following:
 
    .. code-block:: python
 
-       # My GeoNode apps
-       'polls',
-       'tagging',
-       'mptt',
-       'zinnia',
+    # My GeoNode apps
+    'polls',
+    'tagging',
+    'mptt',
+    'zinnia',
 
 #. Synchronize models
 
