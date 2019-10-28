@@ -140,15 +140,15 @@ Throughout this section, we will walk through the creation of a basic poll appli
    You can see all of the other apps that are installed as part of your GeoNode project, 
    but we are specifically interested in the Polls app for now.
 
-   .. figure:: img/admin_polls.png
+   ![](img/admin_polls.png)
 
    Next we will add a new poll via automatically generated admin form.
 
-   .. figure:: img/add_new_poll.png
+   ![](img/add_new_poll.png)
 
    You can enter any sort of question you want for initial testing and select today and now for the publication date.
 
-   .. figure:: img/add_poll.png
+   ![](img/add_poll.png)
 
 #. Configure Choice model
 
@@ -178,7 +178,7 @@ Throughout this section, we will walk through the creation of a basic poll appli
    You can now return to the Poll admin and either add a new poll or edit the one you already created and see that you can now 
    specify the poll choices inline with the poll itself.
 
-   .. figure:: img/choice_admin.png
+   ![](img/choice_admin.png)
 
 #. Create views
 
@@ -286,15 +286,15 @@ Throughout this section, we will walk through the creation of a basic poll appli
 
    You can now visit the index page of your polls app and see that it is now wrapped in the same style as the rest of your GeoNode site. 
 
-   .. figure:: img/polls_geonode.png
+   ![](img/polls_geonode.png)
 
    If you click on a question from the list you will be taken to the poll detail page. 
 
-   .. figure:: img/poll_geonode_hidden.png
+   ![](img/poll_geonode_hidden.png)
 
    It looks like it is empty, but in fact the text is there, but styled to be white by the Bootswatch theme we added in the last section. If you highlight the area where the text is, you will see that it is there.
 
-   .. figure:: img/poll_geonode_highlight.png
+   ![](img/poll_geonode_highlight.png)
 
 Now that you have walked through the basic steps to create a very minimal (though not very useful) Django app and integrated it with your GeoNode project, you should pick up the Django tutorial at part 4 and follow it to add the form for actually accepting responses to your poll questions.
 
@@ -355,7 +355,7 @@ Now that we have created our own app and added it to our GeoNode project, the ne
 
    You can now restart the development server and visit the Admin interface and scroll to the very bottom of the list to find a section for Zinnia that allows you to manage database records for Categories and Blog Entries.
 
-   .. figure:: img/zinnia_admin.png 
+   ![](img/zinnia_admin.png)
 
 #. Configure project
 
@@ -370,7 +370,7 @@ Now that we have created our own app and added it to our GeoNode project, the ne
 
    .. note:: If you are not able to visit the main blog page, you will have to set ``USE_TZ = True`` in settings.py. Restart the server and try again!
 
-   .. figure:: img/zinnia_default.png 
+   ![](img/zinnia_default.png)
 
    This page includes some guidance for us on how to change the default theme. 
 
@@ -399,19 +399,19 @@ Now that we have created our own app and added it to our GeoNode project, the ne
 
    You can see that there are currently no blog entries, so let's add one. Scroll to the bottom of the interface and click the :guilabel:`Post an Entry` link to go to the form in the Admin interface that lets you create a blog post. Go ahead and fill out the form with some information for testing purposes. Make sure that you change the Status dropdown to "published" so the post shows up right away.
 
-   .. figure:: img/zinnia_create_post.png 
+   ![](img/zinnia_create_post.png)
 
    You can explore all of the options available to you as you create your post, and when you are done, click the :guilabel:`Save` button. You will be taken to the page that shows the list of all your blog posts.  
 
-   .. figure:: img/zinnia_post_list.png
+   ![](img/zinnia_post_list.png)
 
    You can then visit your blog post/entry at http://localhost:8000/blog/.
 
-   .. figure:: img/zinnia_blog.png
+   ![](img/zinnia_blog.png)
 
    And if you click on the blog post title, you will be taken to the page for the complete blog post. You and your users can leave comments on this post and various other blog features from this page.  
 
-   .. figure:: img/zinnia_post.png
+   ![](img/zinnia_post.png)
 
 #. Integrate app into your site
 
@@ -428,7 +428,7 @@ Now that we have created our own app and added it to our GeoNode project, the ne
        </li>
        {% endblock %}
 
-   .. figure:: img/navbar_add.png
+   ![](img/navbar_add.png)
 
 At this point, you could explore options for tighter integration between your GeoNode project and Zinnia. Integrating blog posts from Zinnia into your overall search could be useful, as well as including the blog posts a user has written on their Profile Page. You could also explore the additional plugins that go with Zinnia.  
 
@@ -437,4 +437,4 @@ Adding other apps
 
 Now that you have both written your own app and plugged in a 3rd party one, you can explore sites like Django Packages to look for other modules that you could plug into your GeoNode project to meet your needs and requirements. For many types of apps, there are several options and Django Packages is a nice way to compare them. You may find that some apps require significantly more work to integrate into your app than others, but reaching out to the app's author and/or developers should help you get over any difficulties you may encounter.
 
-.. figure:: img/django_packages.png
+![](img/django_packages.png)
