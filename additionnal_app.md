@@ -125,6 +125,12 @@ Throughout this section, we will walk through the creation of a basic poll appli
    Next, let's add the Django admin configuration for our polls app so that we can use the Django Admin to manage the records 
    in our database. Create and edit a new file called `my_app/admin.py` and make it look like the this:
 
+    # -*- coding: utf-8 -*-
+    from __future__ import unicode_literals
+
+    from django.contrib import admin
+
+    # Register your models here.
 
     from my_app.models import Poll
     from django.contrib import admin
@@ -154,6 +160,13 @@ Throughout this section, we will walk through the creation of a basic poll appli
 
    The next step is to configure the Choice model in the admin, but we will configure the choices to be editable in-line 
    with the Poll objects they are attached to. Edit the same :file:`my_app/admin.py` so it now looks like the following:
+
+    # -*- coding: utf-8 -*-
+    from __future__ import unicode_literals
+
+    from django.contrib import admin
+
+    # Register your models here.
 
     from my_app.models import Poll, Choice
     from django.contrib import admin
