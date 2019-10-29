@@ -210,7 +210,6 @@ Throughout this section, we will walk through the creation of a basic poll appli
    Let's start by adding our URL configuration directly to the :file:`urls.py` that already exists in your project at 
    `<my_geonode>/urls.py`. Edit this file and add the following lines after the rest of the existing imports around line 80:
 
-   .. code-block:: python
 
     url(r'^polls/$', 'polls.views.index'),
     url(r'^polls/(?P<poll_id>\d+)/$', 'polls.views.detail'),
