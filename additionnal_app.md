@@ -212,7 +212,7 @@ Throughout this section, we will walk through the creation of a basic poll appli
    The first step of writing views is to design your URL structure. You do this by creating a Python module called a URLconf. 
    URLconfs are how Django associates a given URL with given Python code.
 
-   Let's start by adding our URL configuration directly to the :file:`urls.py` that already exists in your project at 
+   Let's start by adding our URL configuration directly to the `urls.py` that already exists in your project at 
    `<my_geonode>/urls.py`. Edit this file and add the following lines after the rest of the existing imports :
 
 
@@ -243,9 +243,7 @@ Throughout this section, we will walk through the creation of a basic poll appli
 
    
 
-   Next write the views to drive the URL patterns we configured above. Edit polls/views.py to that it looks like the following:
-
-   .. code-block:: python
+   Next write the views to drive the URL patterns we configured above. Edit `polls/views.py` to that it looks like the following:
 
     # -*- coding: utf-8 -*-
     from __future__ import unicode_literals
@@ -356,14 +354,14 @@ Throughout this section, we will walk through the creation of a basic poll appli
 
    
    
-   You can now visit http://<geonode-host>/polls/ in your browser and you should see the the poll question you created in the admin presented like this.
+   You can now visit http://<geonode_host>/polls/ in your browser and you should see the the poll question you created in the admin presented like this.
   
 
-   .. figure:: img/polls_plain.png
+   ![](img/polls_plain.png)
 
 #. Update templates
 
-   We actually want our polls app to display as part of our GeoNode project with the same theme, so let's update the two templates we created above to make them extend from the :file:`site_base.html` template we looked at in the last section. You will need to add the following two lines to the top of each file:
+   We actually want our polls app to display as part of our GeoNode project with the same theme, so let's update the two templates we created above to make them extend from the `site_base.html` template we looked at in the last section. You will need to add the following two lines to the top of each file:
 
    .. code-block:: html
 
