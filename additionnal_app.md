@@ -34,7 +34,7 @@ Let's walk through the an example of the steps necessary to create a very basic 
 GeoNode project. This section is an abridged version of the Django tutorial itself and it is strongly recommended that you
 go through this external tutorial along with this section as it provides much more background material and a signficantly 
 higher level of detail. You should become familiar with all of the information in the `Django tutorial` 
-https://docs.djangoproject.com/en/2.2/intro/tutorial01/ as it is critical to your success as a GeoNode project developer.
+https://docs.djangoproject.com/en/1.11/intro/tutorial01/ as it is critical to your success as a GeoNode project developer.
 
 .. todo:: Add link to Django tutorial. DONE!
 
@@ -50,12 +50,12 @@ Throughout this section, we will walk through the creation of a basic poll appli
 
      
          $ cd geonode/scripts/spcgeonode
-         $ docker-compose exec django /spcgeonode/manage.py startapp my_app
+         $ docker-compose exec django /spcgeonode/manage.py startapp polls
 
    That'll create a directory my_app, which is laid out like this::
 
        geonode/
-           my_app/
+           polls/
                __init__.py
                models.py
                tests.py
@@ -75,23 +75,32 @@ Throughout this section, we will walk through the creation of a basic poll appli
 
    .. todo:: Some kind of schematic or other figure describing this would be helpful.
 
-   Edit the :file:`my_app/models.py` file so it looks like this:
+   Edit the `polls/models.py` file so it looks like this:
 
+
+    # -*- coding: utf-8 -*-
+    from __future__ import unicode_literals
 
     from django.db import models
+    from django.utils.encoding import python_2_unicode_compatible
 
-    class Poll(models.Model):
-        question = models.CharField(max_length=200)
+    # Create your models here.
+
+    @python_2_unicode_compatible  # only if you need to support Python 2
+    class Question(models.Model):
+        question_text = models.CharField(max_length=200)
         pub_date = models.DateTimeField('date published')
-        def __unicode__(self):
-            return self.question
+        def __str__(self):
+            return self.question_text
 
+    @python_2_unicode_compatible  # only if you need to support Python 2
     class Choice(models.Model):
-        poll = models.ForeignKey(Poll)
-        choice = models.CharField(max_length=200)
-        votes = models.IntegerField()
-        def __unicode__(self):
-            return self.choice
+        question = models.ForeignKey(Question, on_delete=models.CASCADE)
+        choice_text = models.CharField(max_length=200)
+        votes = models.IntegerField(default=0)
+        def __str__(self):
+            return self.choice_text
+
 
    That small bit of model code gives Django a lot of information. With it, Django is able to:
 
@@ -100,10 +109,10 @@ Throughout this section, we will walk through the creation of a basic poll appli
 
    But first we need to tell our project that the polls app is installed.
 
-   Edit the `<my_geonode>/local_settings.py` file, and update to include the string "my_app". So it will look like this:
+   Edit the `<my_geonode>/local_settings.py` file, and update to include the string "polls". So it will look like this:
 
 
-       INSTALLED_APPS += ('my_app',)
+       INSTALLED_APPS += ('polls',)
 
    Now Django knows to include the polls app. Let's run another command:
 
@@ -114,7 +123,7 @@ Throughout this section, we will walk through the creation of a basic poll appli
    INSTALLED_APPS that don't already exist in your database. This creates all the tables, initial data, and indexes 
    for any apps you've added to your project since the last time you ran ``makemigrations`` and ``migrate``. 
    ``makemigrations`` and ``migrate`` can be called as often as you like, and it will only ever create the tables that don't exist.
-   More details here : https://docs.djangoproject.com/en/2.2/topics/migrations/
+   More details here : https://docs.djangoproject.com/en/1.11/topics/migrations/
 
    GeoNode uses south for migrations ...
 
@@ -123,28 +132,26 @@ Throughout this section, we will walk through the creation of a basic poll appli
 #. Add Django Admin Configuration
 
    Next, let's add the Django admin configuration for our polls app so that we can use the Django Admin to manage the records 
-   in our database. Create and edit a new file called `my_app/admin.py` and make it look like the this:
+   in our database. Create and edit a new file called `polls/admin.py` and make it look like the this:
 
     # -*- coding: utf-8 -*-
     from __future__ import unicode_literals
-
+    
     from django.contrib import admin
-
+    
     # Register your models here.
-
-    from my_app.models import Poll
-    from django.contrib import admin
-
-    admin.site.register(Poll)
+    from .models import Question
+   
+    admin.site.register(Question)
 
    Run the development server and explore the polls app in the Django Admin by pointing your browser to 
    http://<geonode_host>/admin/ and logging in with the credentials you specified in `Docker SPC GeoNode .env` file.
 
-![](img/admin_top.png)
+  ![](img/admin_top.png)
 
 
    You can see all of the other apps that are installed as part of your GeoNode project, 
-   but we are specifically interested in the My_app app for now.
+   but we are specifically interested in the polls app for now.
 
    ![](img/admin_polls.png)
 
@@ -159,30 +166,28 @@ Throughout this section, we will walk through the creation of a basic poll appli
 #. Configure Choice model
 
    The next step is to configure the Choice model in the admin, but we will configure the choices to be editable in-line 
-   with the Poll objects they are attached to. Edit the same :file:`my_app/admin.py` so it now looks like the following:
+   with the Poll objects they are attached to. Edit the same `polls/admin.py` so it now looks like the following:
 
     # -*- coding: utf-8 -*-
     from __future__ import unicode_literals
-
+    
     from django.contrib import admin
-
+    
     # Register your models here.
-
-    from my_app.models import Poll, Choice
-    from django.contrib import admin
-
+    from .models import Question, Choice
+    
     class ChoiceInline(admin.StackedInline):
         model = Choice
         extra = 3
-
-    class PollAdmin(admin.ModelAdmin):
+    
+    class QuestionAdmin(admin.ModelAdmin):
         fieldsets = [
-            (None,               {'fields': ['question']}),
+            (None,               {'fields': ['question_text']}),
             ('Date information', {'fields': ['pub_date'], 'classes': ['collapse']}),
         ]
         inlines = [ChoiceInline]
-
-    admin.site.register(Poll, PollAdmin)
+    
+    admin.site.register(Question, QuestionAdmin)
 
    This tells Django that Choice objects are edited on the Poll admin page, and by default, provide enough fields for 3 choices.
 
@@ -208,74 +213,151 @@ Throughout this section, we will walk through the creation of a basic poll appli
    URLconfs are how Django associates a given URL with given Python code.
 
    Let's start by adding our URL configuration directly to the :file:`urls.py` that already exists in your project at 
-   `<my_geonode>/urls.py`. Edit this file and add the following lines after the rest of the existing imports around line 80:
+   `<my_geonode>/urls.py`. Edit this file and add the following lines after the rest of the existing imports :
 
 
-    url(r'^polls/$', 'polls.views.index'),
-    url(r'^polls/(?P<poll_id>\d+)/$', 'polls.views.detail'),
-    url(r'^polls/(?P<poll_id>\d+)/results/$', 'polls.views.results'),
-    url(r'^polls/(?P<poll_id>\d+)/vote/$', 'polls.views.vote'),
+    urlpatterns += [
+    ## include your urls here
+    url(r'^polls/', include('polls.urls')),
+    ]
 
-   .. note:: Eventually we will want to move this set of URL configurations inside the URLs app itself, but for the sake of 
-   brevity in this workshop, we will put them in the main :file:`urls.py` for now. You can consult the Django tutorial for 
-   more information on this topic.
+
+   Then configure proper urls for polls. Edit `polls/urls.py` and make it looks like that :
+   
+    # -*- coding: utf-8 -*-
+    from django.conf.urls import url
+    
+    from . import views
+    
+    app_name = 'polls'
+    urlpatterns = [
+        # ex: /polls/
+        url(r'^$', views.index, name='index'),
+        # ex: /polls/5/
+        url(r'^(?P<question_id>[0-9]+)/$', views.detail, name='detail'),
+        # ex: /polls/5/results/
+        url(r'^(?P<question_id>[0-9]+)/results/$', views.results, name='results'),
+        # ex: /polls/5/vote/
+        url(r'^(?P<question_id>[0-9]+)/vote/$', views.vote, name='vote'),
+        ]
+
+   
 
    Next write the views to drive the URL patterns we configured above. Edit polls/views.py to that it looks like the following:
 
    .. code-block:: python
 
-    from django.template import RequestContext, loader
-    from polls.models import Poll
-    from django.http import HttpResponse
-    from django.http import Http404
-    from django.shortcuts import render_to_response
-
+    # -*- coding: utf-8 -*-
+    from __future__ import unicode_literals
+    
+    from django.shortcuts import render
+    
+    # Create your views here.
+    from django.shortcuts import get_object_or_404, render
+    from django.http import HttpResponseRedirect, HttpResponse
+    from django.urls import reverse
+    from django.template import loader
+    from .models import Choice, Question
+    
     def index(request):
-        latest_poll_list = Poll.objects.all().order_by('-pub_date')[:5]
-        return render_to_response('polls/index.html',
-            RequestContext(request, {'latest_poll_list': latest_poll_list}))
+        latest_question_list = Question.objects.order_by('-pub_date')[:5]
+        context = {
+            'latest_question_list': latest_question_list,
+        }
+        return render(request, 'polls/index.html', context)
 
-    def detail(request, poll_id):
+    def detail(request, question_id):
+    #    return HttpResponse("You're looking at question %s." % question_id)
         try:
-            p = Poll.objects.get(pk=poll_id)
-        except Poll.DoesNotExist:
-            raise Http404
-        return render_to_response('polls/detail.html', RequestContext(request, {'poll': p}))
+            question = Question.objects.get(pk=question_id)
+        except Question.DoesNotExist:
+            raise Http404("Question does not exist")
+        return render(request, 'polls/detail.html', {'question': question})
 
-    def results(request, poll_id):
-        return HttpResponse("You're looking at the results of poll %s." % poll_id)
+    def results(request, question_id):
+        question = get_object_or_404(Question, pk=question_id)
+        return render(request, 'polls/results.html', {'question': question})
 
-    def vote(request, poll_id):
-        return HttpResponse("You're voting on poll %s." % poll_id)
+    def vote(request, question_id):
+        question = get_object_or_404(Question, pk=question_id)
+        try:
+            selected_choice = question.choice_set.get(pk=request.POST['choice'])
+        except (KeyError, Choice.DoesNotExist):
+            # Redisplay the question voting form.
+            return render(request, 'polls/detail.html', {
+                'question': question,
+                'error_message': "You didn't select a choice.",
+            })
+        else:
+            selected_choice.votes += 1
+            selected_choice.save()
+            # Always return an HttpResponseRedirect after successfully dealing
+            # with POST data. This prevents data from being posted twice if a
+            # user hits the Back button.
+            return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
 
-   .. note:: We have only stubbed in the views for the results and vote pages. They are not very useful as-is. We will revisit these later.
 
-   Now we have views in place, but we are referencing templates that do not yet exist. Let's add them by first creating a template directory in your polls app at :file:`polls/templates/polls` and creating :file:`polls/templates/polls/index.html` to look like the following:
+   Now we have views in place, but we are referencing templates that do not yet exist. Let's add them by first creating a template directory in your polls app at `polls/templates/polls` and creating `polls/templates/polls/index.html` to look like the following:
 
-   .. code-block:: html
+    {% load static %}
 
-       {% if latest_poll_list %}
-           <ul>
-           {% for poll in latest_poll_list %}
-               <li><a href="/polls/{{ poll.id }}/">{{ poll.question }}</a></li>
-           {% endfor %}
-           </ul>
-       {% else %}
-           <p>No polls are available.</p>
-       {% endif %}
+    <link rel="stylesheet" type="text/css" href="{% static 'polls/style.css' %}" />
 
-   Next we need to create the template for the poll detail page. Create a new file at :file:`polls/templates/polls/detail.html` to look like the following:
+    {% if latest_question_list %}
+        <ul>
+        {% for question in latest_question_list %}
+            <li><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No polls are available.</p>
+    {% endif %}
 
-   .. code-block:: html
 
-       <h1>{{ poll.question }}</h1>
-       <ul>
-       {% for choice in poll.choice_set.all %}
-           <li>{{ choice.choice }}</li>
-       {% endfor %}
-       </ul>
+   Create a new css file in `polls/static/polls/styles.css` and add : 
+   
+    li a {
+     color: green;
+    }
 
-   You can now visit http://localhost:8000/polls/ in your browser and you should see the the poll question you created in the admin presented like this.
+   Don't forget to collect static files (`styles.css`) with : 
+   
+    docker-compose exec django /spcgeonode/manage.py collectstatics
+    
+    
+   Next we need to create the template for the poll detail page. Create a new file at `polls/templates/polls/detail.html` to look like the following:
+
+
+    <h1>{{ question.question_text }}</h1>
+
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+    <form action="{% url 'polls:vote' question.id %}" method="post">
+    {% csrf_token %}
+    {% for choice in question.choice_set.all %}
+        <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}" />
+        <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br />
+    {% endfor %}
+    <input type="submit" value="Vote" />
+    </form>
+
+
+   Then we want to display results, create a `polls/templates/polls/results.html` :
+   
+    <h1>{{ question.question_text }}</h1>
+
+    <ul>
+    {% for choice in question.choice_set.all %}
+        <li>{{ choice.choice_text }} -- {{ choice.votes }} vote{{ choice.votes|pluralize }}</li>
+    {% endfor %}
+    </ul>
+
+    <a href="{% url 'polls:detail' question.id %}">Vote again?</a>
+
+   
+   
+   You can now visit http://<geonode-host>/polls/ in your browser and you should see the the poll question you created in the admin presented like this.
+  
 
    .. figure:: img/polls_plain.png
 
