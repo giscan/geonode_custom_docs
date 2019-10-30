@@ -320,7 +320,7 @@ Throughout this section, we will walk through the creation of a basic poll appli
 
    Don't forget to collect static files (`styles.css`) with : 
    
-    docker-compose exec django /spcgeonode/manage.py collectstatics
+    $ docker-compose exec django /spcgeonode/manage.py collectstatic
     
     
    Next we need to create the template for the poll detail page. Create a new file at `polls/templates/polls/detail.html` to look like the following:
