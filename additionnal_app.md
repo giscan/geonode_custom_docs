@@ -119,15 +119,13 @@ Throughout this section, we will walk through the creation of a basic poll appli
        $ docker-compose exec django /spcgeonode/manage.py makemigrations
        $ docker-compose exec django /spcgeonode/manage.py migrate
 
-   The ``makemigrations`` and ``migrate`` command runs the SQL from ``sqlall (wrong : need update)`` on your database for all apps in 
+   The ``makemigrations`` and ``migrate`` command runs the SQL from `sqlmigrate` on your database for all apps in 
    INSTALLED_APPS that don't already exist in your database. This creates all the tables, initial data, and indexes 
    for any apps you've added to your project since the last time you ran ``makemigrations`` and ``migrate``. 
    ``makemigrations`` and ``migrate`` can be called as often as you like, and it will only ever create the tables that don't exist.
    More details here : https://docs.djangoproject.com/en/1.11/topics/migrations/
 
-   GeoNode uses south for migrations ...
-
-   .. todo:: Missing content.
+   GeoNode uses south for migrations ... .. todo:: Missing content.
 
 #. Add Django Admin Configuration
 
