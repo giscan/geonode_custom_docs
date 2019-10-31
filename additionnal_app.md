@@ -36,14 +36,13 @@ go through this external tutorial along with this section as it provides much mo
 higher level of detail. You should become familiar with all of the information in the `Django tutorial` 
 https://docs.djangoproject.com/en/1.11/intro/tutorial01/ as it is critical to your success as a GeoNode project developer.
 
-.. todo:: Add link to Django tutorial. DONE!
 
 Throughout this section, we will walk through the creation of a basic poll application. It will consist of two parts:
 
 * A public site that lets people view polls and vote in them.
 * An admin site that lets you add, change, and delete polls.
 
-#. Create app structure
+# Create app structure
 
    Since we have already created our GeoNode project from a template project, we will start by creating our 
    app structure and then adding models:
@@ -57,13 +56,17 @@ Throughout this section, we will walk through the creation of a basic poll appli
        geonode/
            polls/
                __init__.py
+               admin.py
+               apps.py
+               migrations/
+                   __init__.py
                models.py
                tests.py
                views.py
 
    This directory structure will house the my_app application.
 
-#. Add models
+# Add models
 
    The next step in writing a database web app in Django is to define your models—essentially, your database layout 
    with additional metadata.
@@ -127,7 +130,7 @@ Throughout this section, we will walk through the creation of a basic poll appli
 
    GeoNode uses south for migrations ... .. todo:: Missing content.
 
-#. Add Django Admin Configuration
+# Add Django Admin Configuration
 
    Next, let's add the Django admin configuration for our polls app so that we can use the Django Admin to manage the records 
    in our database. Create and edit a new file called `polls/admin.py` and make it look like the this:
@@ -143,7 +146,7 @@ Throughout this section, we will walk through the creation of a basic poll appli
     admin.site.register(Question)
 
    Run the development server and explore the polls app in the Django Admin by pointing your browser to 
-   http://<geonode_host>/admin/ and logging in with the credentials you specified in `Docker SPC GeoNode .env` file.
+   `http://<geonode_host>/admin/` and logging in with the credentials you specified in `Docker SPC GeoNode .env` file.
 
   ![](img/admin_top.png)
 
@@ -161,7 +164,7 @@ Throughout this section, we will walk through the creation of a basic poll appli
 
    ![](img/add_poll.png)
 
-#. Configure Choice model
+# Configure Choice model
 
    The next step is to configure the Choice model in the admin, but we will configure the choices to be editable in-line 
    with the Poll objects they are attached to. Edit the same `polls/admin.py` so it now looks like the following:
@@ -189,14 +192,14 @@ Throughout this section, we will walk through the creation of a basic poll appli
 
    This tells Django that Choice objects are edited on the Poll admin page, and by default, provide enough fields for 3 choices.
 
-#. Add/edit poll
+# Add/edit poll
 
    You can now return to the Poll admin and either add a new poll or edit the one you already created and see that you can now 
    specify the poll choices inline with the poll itself.
 
    ![](img/choice_admin.png)
 
-#. Create views
+# Create views
 
    From here, we want to create views to display the polls inside our GeoNode project. 
    A view is a "type" of Web page in your Django application that generally serves a specific function and has a specific 
@@ -351,28 +354,23 @@ Throughout this section, we will walk through the creation of a basic poll appli
     <a href="{% url 'polls:detail' question.id %}">Vote again?</a>
 
    
-   
-   You can now visit http://<geonode_host>/polls/ in your browser and you should see the the poll question you created in the admin presented like this.
+   You can now visit `http://<geonode_host>/polls/` in your browser and you should see the the poll question you created in the admin presented like this.
   
 
    ![](img/polls_plain.png)
 
-#. Update templates
+# Update templates
 
-   We actually want our polls app to display as part of our GeoNode project with the same theme, so let's update the two templates we created above to make them extend from the `site_base.html` template we looked at in the last section. You will need to add the following two lines to the top of each file:
-
-   .. code-block:: html
+   We actually want our polls app to display as part of our GeoNode project with the same theme, so let's update the three templates we created above (`index.html`, `detail.html` and `results.html`) to make them extend from the `site_base.html` template we looked at in the last section. You will need to add the following two lines to the top of each file:
 
        {% extends 'site_base.html' %}
        {% block body %}
 
    And close the block at the bottom of each file with:
 
-   .. code-block:: html
-
        {% endblock %}
 
-   This tells Django to extend from the :file:`site_base.html` template so your polls app has the same style as the rest of your GeoNode, and it specifies that the content in these templates should be rendered to the body block defined in GeoNode's :file:`base.html` template that your :file:`site_base.html` extends from.
+   This tells Django to extend from the :file:`site_base.html` template so your polls app has the same style as the rest of your GeoNode, and it specifies that the content in these templates should be rendered to the body block defined in GeoNode's `base.html` template that your `site_base.html` extends from.
 
    You can now visit the index page of your polls app and see that it is now wrapped in the same style as the rest of your GeoNode site. 
 
@@ -393,25 +391,21 @@ We strongly recommend that you spend as much time as you need with the Django tu
 Adding a 3rd party blog app 
 ---------------------------
 
-Now that we have created our own app and added it to our GeoNode project, the next thing we will work through is adding a 3rd party blog app. There are a number of blog apps that you can use, but for purposes of this workshop, we will use a relatively simple, yet extensible app called `Zinnia <http://django-blog-zinnia.com/blog/>`_. You can find out more information about Zinnia on its website or on its `GitHub project page <https://github.com/Fantomas42/django-blog-zinnia>`_ or by following its `documentation <http://django-blog-zinnia.com/documentation/>`_. This section will walk you through the minimal set of steps necessary to add Zinnia to your GeoNode project.
+Now that we have created our own app and added it to our GeoNode project, the next thing we will work through is adding a 3rd party blog app. There are a number of blog apps that you can use, but for purposes of this workshop, we will use a relatively simple, yet extensible app called `Zinnia` http://django-blog-zinnia.com/blog/ . You can find out more information about Zinnia on its website or on its `GitHub project page` https://github.com/Fantomas42/django-blog-zinnia or by following its `documentation` http://django-blog-zinnia.com/documentation/ . This section will walk you through the minimal set of steps necessary to add Zinnia to your GeoNode project.
 
 .. todo:: Again, step numbers would be helpful here. DONE!
 
-#. Install Zinnia
+# Install Zinnia
 
    The first thing to do is to install Zinnia into the virtualenv that you are working in. Make sure your virtualenv is activated and execute the following command:
-
-   .. code-block:: console
 
        $ pip install django-blog-zinnia
 
    This will install Zinnia and all of the libraries that it depends on. 
 
-#. Add Zinnia to INSTALLED_APPS
+# Add Zinnia to INSTALLED_APPS
 
-   Next add Zinnia to the INSTALLED_APPS section of your GeoNode projects :file:`settings.py` file by editing :file:`<my_geonode>/settings.py` and adding 'django.contrib.comments' to the section labeled "Apps Bundled with Django" so that it looks like the following:
-
-   .. code-block:: python
+   Next add Zinnia to the INSTALLED_APPS section of your GeoNode projects `local_settings.py` file by editing `<my_geonode>/local_settings.py` and adding 'django.contrib.comments' to the section labeled "Apps Bundled with Django" so that it looks like the following:
 
     # Apps bundled with Django
     'django.contrib.auth',
@@ -427,36 +421,31 @@ Now that we have created our own app and added it to our GeoNode project, the ne
 
    And then add the ``tagging``, ``mptt`` and ``zinnia`` apps to the end of the INSTALLED_APPS where we previously added a section labeled "My GeoNode apps". It should like like the following:
 
-   .. code-block:: python
-
     # My GeoNode apps
     'polls',
     'tagging',
     'mptt',
     'zinnia',
 
-#. Synchronize models
+# Synchronize models
 
-   Next you will need to run ``syncdb`` again to synchronize the models for the apps we have just added to our project's database. This time we want to pass the ``--all`` flag to ``syncdb`` so it ignores the schema migrations. Schema migrations are discussed further in GeoNode's documentation, but it is safe to ignore them here.
+   Next you will need to run ``makemigrations`` and ``migrate`` again to synchronize the models for the apps we have just added to our project's database. 
 
-   .. code-block:: console
-
-      $ python manage.py syncdb --all
+      $ docker-compose exec django /spcgeonode/manage.py makemigrations
+      $ docker-compose exec django /spcgeonode/manage.py migrate
 
    You can now restart the development server and visit the Admin interface and scroll to the very bottom of the list to find a section for Zinnia that allows you to manage database records for Categories and Blog Entries.
 
    ![](img/zinnia_admin.png)
 
-#. Configure project
+# Configure project
 
    Next we need to configure our project to add Zinnia's URL configurations. Add the following two URL configuration entries to the end of :file:`<my_geonode>/urls.py`:
-
-   .. code-block:: python
 
        url(r'^blog/', include('zinnia.urls')),
        url(r'^djcomments/', include('django.contrib.comments.urls')),
 
-   If you visit the main blog page in your browser at http://localhost:8000/blog/ you will find that the blog displays with Zinnia's default theme as shown below.
+   If you visit the main blog page in your browser at http://<geonode_host>/blog/ you will find that the blog displays with Zinnia's default theme as shown below.
 
    .. note:: If you are not able to visit the main blog page, you will have to set ``USE_TZ = True`` in settings.py. Restart the server and try again!
 
@@ -464,38 +453,31 @@ Now that we have created our own app and added it to our GeoNode project, the ne
 
    This page includes some guidance for us on how to change the default theme. 
 
-#. Change default theme
+# Change default theme
 
-   The first thing we need to do is to copy Zinnia's :file:`base.html` template into our own project so we can modify it. When you installed Zinnia, templates were installed to :file:`/var/lib/geonode/lib/python2.7/site-packages/zinnia/templates/zinnia/`. You can copy the base template by executing the following commands:
-
-   .. code-block:: console
+   The first thing we need to do is to copy Zinnia's `base.html` template into our own project so we can modify it. When you installed Zinnia, templates were installed to `/var/lib/geonode/lib/python2.7/site-packages/zinnia/templates/zinnia/`. You can copy the base template by executing the following commands:
 
        $ mkdir <my_geonode>/templates/zinnia
        $ cp /var/lib/geonode/lib/python2.7/site-packages/zinnia/templates/zinnia/base.html <my_geonode>/templates/zinnia/
 
    Then you need to edit this file and change the topmost line to read as below such that this template extends from our projects :file:`site_base.html` rather than the zinnia :file:`skeleton.html`:
 
-   .. code-block:: html
-
        {% extends "site_base.html" %}
 
    Since Zinnia uses a different block naming scheme than GeoNode does, you need to add the following line to the bottom of your site_base.html file so that the content block gets rendered properly:
 
-   .. code-block:: html
-
        {% block body %}{% block content %}{% endblock %}{% endblock %}
 
-   .. figure:: img/zinnia_geonode.png 
 
-   You can see that there are currently no blog entries, so let's add one. Scroll to the bottom of the interface and click the :guilabel:`Post an Entry` link to go to the form in the Admin interface that lets you create a blog post. Go ahead and fill out the form with some information for testing purposes. Make sure that you change the Status dropdown to "published" so the post shows up right away.
+   You can see that there are currently no blog entries, so let's add one. Scroll to the bottom of the interface and click the `Post an Entry` link to go to the form in the Admin interface that lets you create a blog post. Go ahead and fill out the form with some information for testing purposes. Make sure that you change the Status dropdown to "published" so the post shows up right away.
 
    ![](img/zinnia_create_post.png)
 
-   You can explore all of the options available to you as you create your post, and when you are done, click the :guilabel:`Save` button. You will be taken to the page that shows the list of all your blog posts.  
+   You can explore all of the options available to you as you create your post, and when you are done, click the `Save` button. You will be taken to the page that shows the list of all your blog posts.  
 
    ![](img/zinnia_post_list.png)
 
-   You can then visit your blog post/entry at http://localhost:8000/blog/.
+   You can then visit your blog post/entry at `http://<geonode_host>/blog/`.
 
    ![](img/zinnia_blog.png)
 
@@ -503,12 +485,11 @@ Now that we have created our own app and added it to our GeoNode project, the ne
 
    ![](img/zinnia_post.png)
 
-#. Integrate app into your site
+# Integrate app into your site
 
-   The last thing we need to do to fully integrate this blog app (and our polls app) into our site is to add it to the options on the navbar. To do so, we need to add the following block override to our Projects :file:`site_base.html`:
+   The last thing we need to do to fully integrate this blog app (and our polls app) into our site is to add it to the options on the navbar. To do so, we need to add the following block override to our Projects `site_base.html`:
 
-   .. code-block:: html
-
+   
        {% block extra-nav %}
        <li id="nav_polls">
            <a href="/polls/">Polls</a>
