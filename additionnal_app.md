@@ -535,7 +535,7 @@ Now that we have created our own app and added it to our GeoNode project, the ne
            <a href="/polls/">Polls</a>
        </li>
        <li id="nav_blog">
-           <a href="{% url 'zinnia_entry_archive_index' %}">Blog</a>
+           <a href="/blog/">Blog</a>
        </li>
        {% endblock %}
 
