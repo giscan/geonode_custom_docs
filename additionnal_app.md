@@ -419,39 +419,31 @@ Adding a 3rd party blog app
 
 Now that we have created our own app and added it to our GeoNode project, the next thing we will work through is adding a 3rd party blog app. There are a number of blog apps that you can use, but for purposes of this workshop, we will use a relatively simple, yet extensible app called `Zinnia` http://django-blog-zinnia.com/blog/ . You can find out more information about Zinnia on its website or on its `GitHub project page` https://github.com/Fantomas42/django-blog-zinnia or by following its `documentation` http://django-blog-zinnia.com/documentation/ . This section will walk you through the minimal set of steps necessary to add Zinnia to your GeoNode project.
 
-.. todo:: Again, step numbers would be helpful here. DONE!
-
 # Install Zinnia
 
    The first thing to do is to install Zinnia into the virtualenv that you are working in. Make sure your virtualenv is activated and execute the following command:
 
-       $ pip install django-blog-zinnia
+       $ docker-compose exec django pip install django-blog-zinnia==0.19
 
    This will install Zinnia and all of the libraries that it depends on. 
 
 # Add Zinnia to INSTALLED_APPS
 
-   Next add Zinnia to the INSTALLED_APPS section of your GeoNode projects `local_settings.py` file by editing `<my_geonode>/local_settings.py` and adding 'django.contrib.comments' to the section labeled "Apps Bundled with Django" so that it looks like the following:
+   Next add Zinnia to the INSTALLED_APPS section of your GeoNode projects `local_settings.py` file by editing `<my_geonode>/local_settings.py` and adding 'django_comments' to the section labeled "Apps Bundled with Django" so that it looks like the following:
 
-    # Apps bundled with Django
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.sites',
-    'django.contrib.admin',
-    'django.contrib.sitemaps',
-    'django.contrib.staticfiles',
-    'django.contrib.messages',
-    'django.contrib.humanize',
-    'django.contrib.comments',
+    INSTALLED_APPS += (
+        'django_comments',
+        )
 
    And then add the ``tagging``, ``mptt`` and ``zinnia`` apps to the end of the INSTALLED_APPS where we previously added a section labeled "My GeoNode apps". It should like like the following:
 
     # My GeoNode apps
-    'polls',
-    'tagging',
-    'mptt',
-    'zinnia',
+    INSTALLED_APPS += (
+        'django_comments',
+        'tagging',
+        'mptt',
+        'zinnia',
+    )
 
 # Synchronize models
 
@@ -469,11 +461,11 @@ Now that we have created our own app and added it to our GeoNode project, the ne
    Next we need to configure our project to add Zinnia's URL configurations. Add the following two URL configuration entries to the end of :file:`<my_geonode>/urls.py`:
 
        url(r'^blog/', include('zinnia.urls')),
-       url(r'^djcomments/', include('django.contrib.comments.urls')),
+       url(r'^djcomments/', include('django_comments.urls')),
 
    If you visit the main blog page in your browser at http://<geonode_host>/blog/ you will find that the blog displays with Zinnia's default theme as shown below.
 
-   .. note:: If you are not able to visit the main blog page, you will have to set ``USE_TZ = True`` in settings.py. Restart the server and try again!
+   .. note:: If you are not able to visit the main blog page, you will have to set ``USE_TZ = True`` in local_settings.py. Restart the server and try again!
 
    ![](img/zinnia_default.png)
 
