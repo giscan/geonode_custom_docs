@@ -421,9 +421,27 @@ Now that we have created our own app and added it to our GeoNode project, the ne
 
 # Install Zinnia
 
-   The first thing to do is to install Zinnia into the virtualenv that you are working in. Make sure your virtualenv is activated and execute the following command:
+   The first thing to do is to install Zinnia into the virtualenv that you are working in. 
+   
+   a) As we use docker, if you install in docker running image, it will be deleted at the next docker container creation. If you shut down your containers with `docker-compose down` then relaunch with `docker-compose up`, all modifications you made will be remove. So we need to rebuild a new docker image with zinnia. To do this we need to edit `geonode/requirements.txt` and add : 
+   
+      django-blog-zinnia==0.19
+      
+   Next we need to rebuild docker image with : 
+   
+      $ docker-compose build django 
+   
+   Then stop and restart django container with :
+      
+      $ docker-compose down django && docker-compose start django 
+   
+   Note that this method will not stop the running service before we restart django.
+   
+   
+   
+   b) If it's just for testing and you don't want to keep modifications, you could try with :
 
-       $ docker-compose exec django pip install django-blog-zinnia==0.19
+      $ docker-compose exec django pip install django-blog-zinnia==0.19
 
    This will install Zinnia and all of the libraries that it depends on. 
 
@@ -444,6 +462,10 @@ Now that we have created our own app and added it to our GeoNode project, the ne
         'mptt',
         'zinnia',
     )
+
+  After each modification of settings or local_settings you could test your configuration with : 
+  
+    $ docker-compose exec django /spcgeonode/manage.py check
 
 # Synchronize models
 
