@@ -439,7 +439,7 @@ Now that we have created our own app and added it to our GeoNode project, the ne
    
    
    
-   b) If it's just for testing and you don't want to keep modifications, you could try with :
+   b) If it's just for testing* (*you may need to run `manage.py collecstatic` later) and you don't want to keep modifications, you could try with :
 
       $ docker-compose exec django pip install django-blog-zinnia==0.19
 
@@ -495,12 +495,12 @@ Now that we have created our own app and added it to our GeoNode project, the ne
 
 # Change default theme
 
-   The first thing we need to do is to copy Zinnia's `base.html` template into our own project so we can modify it. When you installed Zinnia, templates were installed to `/var/lib/geonode/lib/python2.7/site-packages/zinnia/templates/zinnia/`. You can copy the base template by executing the following commands:
+   The first thing we need to do is to copy Zinnia's `base.html` template into our own project so we can modify it. When you installed Zinnia, templates were installed to `/usr/local/lib/python2.7/site-packages/zinnia/templates/zinnia/` in django images. You can copy the base template by executing the following commands:
 
-       $ mkdir <my_geonode>/templates/zinnia
-       $ cp /var/lib/geonode/lib/python2.7/site-packages/zinnia/templates/zinnia/base.html <my_geonode>/templates/zinnia/
+       $ mkdir -p <my_geonode>/templates/zinnia
+       $ docker-compose exec django cp /usr/local/lib/python2.7/site-packages/zinnia/templates/zinnia/base.html /spcgeonode/<my_geonode>/templates/zinnia/
 
-   Then you need to edit this file and change the topmost line to read as below such that this template extends from our projects :file:`site_base.html` rather than the zinnia :file:`skeleton.html`:
+   Then you need to edit this file and change the topmost line to read as below such that this template extends from our projects `site_base.html` rather than the zinnia `skeleton.html`:
 
        {% extends "site_base.html" %}
 
@@ -527,7 +527,7 @@ Now that we have created our own app and added it to our GeoNode project, the ne
 
 # Integrate app into your site
 
-   The last thing we need to do to fully integrate this blog app (and our polls app) into our site is to add it to the options on the navbar. To do so, we need to add the following block override to our Projects `site_base.html`:
+   The last thing we need to do to fully integrate this blog app (and our polls app) into our site is to add it to the options on the navbar. To do so, we need to add the following `{% block extra_tab %}` to our Projects `site_base.html`:
 
    
        {% block extra-nav %}
