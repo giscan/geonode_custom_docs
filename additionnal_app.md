@@ -64,7 +64,7 @@ Throughout this section, we will walk through the creation of a basic poll appli
                tests.py
                views.py
 
-   This directory structure will house the my_app application.
+   This directory structure will house the polls application.
 
 # Add models
 
@@ -75,8 +75,8 @@ Throughout this section, we will walk through the creation of a basic poll appli
    A choice has two fields:    the text of the choice and a vote tally. Each choice is associated with a poll.
 
    These concepts are represented by simple Python classes.
-
-   .. todo:: Some kind of schematic or other figure describing this would be helpful.
+   
+  ![](img/django_schema.png)
 
    Edit the `polls/models.py` file so it looks like this:
 
@@ -383,6 +383,32 @@ Throughout this section, we will walk through the creation of a basic poll appli
    It looks like it is empty, but in fact the text is there, but styled to be white by the Bootswatch theme we added in the last section. If you highlight the area where the text is, you will see that it is there.
 
    ![](img/poll_geonode_highlight.png)
+
+# Add your polls app to geonode menu 
+
+   There is two ways to do that :
+   
+  1. First use Django admin :
+
+  ![](img/add_custom_menu.png)
+  
+  ![](img/add_custom_menu2.png)
+
+
+  2. The second method is to edit your custom project and edit `<my_geonode/index.html>` :
+  
+    {% block hero %}
+    <div class="jumbotron">
+        <div class="container">
+            <h1>{{custom_theme.jumbotron_welcome_title|default:_("My Geonode")}}</h1>
+            <p></p>
+            <p>{{custom_theme.jumbotron_welcome_content|default:_("GeoNode is an open source platform for sharing geospatial data and maps.")}}</p>
+            {% if not custom_theme.jumbotron_cta_hide %}
+            <a class="btn btn-default btn-lg" href="{{custom_theme.jumbotron_cta_link|default:_("/polls/")}}" role="button">{{custom_theme.jumbotron_cta_text|default:_("Polls &raquo;")}}</a>
+            {% endif %}
+        </div>
+    </div>
+    {% endblock hero %}
 
 Now that you have walked through the basic steps to create a very minimal (though not very useful) Django app and integrated it with your GeoNode project, you should pick up the Django tutorial at part 4 and follow it to add the form for actually accepting responses to your poll questions.
 
