@@ -89,7 +89,7 @@ It could be necessary to add additionnal page to your Django Geonode project but
     
     
    Additionnal note : how to find code to add in urls.py =>
-   Just go to geonode folder where urls.py is present, then look for code in this file or do this bash command : 
+   Just go to geonode folder where urls.py is present, then look for code in this file or do this bash command (An about page is already present in standard Geonode installation) : 
    
    
    
